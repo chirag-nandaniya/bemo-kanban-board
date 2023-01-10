@@ -31,8 +31,15 @@
                             <a class="no-underline hover:underline" href="{{ route('register') }}">{{ __('Register') }}</a>
                         @endif
                     @else
+                        <a href="{{ route('download') }}"
+                           class="no-underline hover:underline"
+                           onclick="event.preventDefault();
+                                document.getElementById('db-download-form').submit();">{{ __('Export DB') }}</a>
+                        <form id="db-download-form" action="{{ route('download') }}" method="POST" class="hidden">
+                            {{ csrf_field() }}
+                        </form>
                         <span>{{ Auth::user()->name }}</span>
-
+                        
                         <a href="{{ route('logout') }}"
                            class="no-underline hover:underline"
                            onclick="event.preventDefault();

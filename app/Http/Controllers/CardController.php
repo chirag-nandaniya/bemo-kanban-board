@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Spatie\DbDumper\Databases\Mysql;
 
 class CardController extends Controller
 {
@@ -50,5 +51,14 @@ class CardController extends Controller
     public function update()
     {
         //
+    }
+
+    public function download()
+    {
+        MySql::create()
+        ->setDbName(env('DB_DATABASE'))
+        ->setUserName(env('DB_USERNAME'))
+        ->setPassword(env('DB_PASSWORD'))
+        ->dumpToFile(storage_path('app/public/db').env('DB_DATABASE').'.sql');
     }
 }
