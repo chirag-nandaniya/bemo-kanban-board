@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\StatusController;
+use App\Models\Card;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,4 +41,5 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('statuses', [StatusController::class, 'store'])->name('statuses.store');
     Route::put('statuses', [StatusController::class, 'update'])->name('statuses.update');
 });
+
 
