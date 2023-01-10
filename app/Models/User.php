@@ -41,4 +41,48 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function cards()
+    {
+        return $this->hasMany(Card::class);
+    }
+
+    public function statuses()
+    {
+        return $this->hasMany(Status::class)->orderBy('order');
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            // Create default statuses
+            $user->statuses()->createMany([
+                [
+                    'title' => 'Product Backlog',
+                    'slug' => 'product-backlog',
+                    'order' => 1
+                ],
+                [
+                    'title' => 'Sprint Backlog',
+                    'slug' => 'sprint-backlog',
+                    'order' => 2
+                ],
+                [
+                    'title' => 'In Progress',
+                    'slug' => 'in-progress',
+                    'order' => 3
+                ],
+                [
+                    'title' => 'Ready To Review',
+                    'slug' => 'ready-to-review',
+                    'order' => 4
+                ],
+                [
+                    'title' => 'Done',
+                    'slug' => 'done',
+                    'order' => 5
+                ]
+            ]);
+        });
+    }
 }
