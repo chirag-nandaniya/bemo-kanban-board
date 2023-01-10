@@ -16,9 +16,19 @@
             Add Card
           </button>
         </div>
-        <div class="p-2 flex-1 flex flex-col h-full overflow-x-hidden overflow-y-auto bg-blue-100">
+        <div class="p-2 bg-blue-100">
 
           <!-- Cards -->
+          <draggable
+      class="flex-1 overflow-hidden"
+      v-model="status.cards"
+      v-bind="cardDragOptions"
+      @end="handleCardMoved"
+    >
+      <transition-group
+        class="flex-1 flex flex-col h-full overflow-x-hidden overflow-y-auto rounded shadow-xs"
+        tag="div"
+      >
           <div
             v-for="card in status.cards"
             :key="card.id"
@@ -31,12 +41,14 @@
               {{ card.description }}
             </p>
           </div>
+          </transition-group>
+    </draggable>
           <AddCardForm
-    v-if="newCardForStatus === status.id"
-    :status-id="status.id"
-    v-on:card-added="handleCardAdded"
-    v-on:card-canceled="closeAddCardForm"
-  />
+            v-if="newCardForStatus === status.id"
+            :status-id="status.id"
+            v-on:card-added="handleCardAdded"
+            v-on:card-canceled="closeAddCardForm"
+          />
           <!-- ./Cards -->
 
           <!-- No Cards -->
@@ -62,8 +74,9 @@
 
 <script>
 import AddCardForm from "./AddCardForm";
+import draggable from "vuedraggable";
 export default {
-  components: { AddCardForm }, // register component
+  components: { draggable, AddCardForm }, // register component
   props: {
     initialData: Array
   },
@@ -76,6 +89,15 @@ export default {
   mounted() {
     // 'clone' the statuses so we don't alter the prop when making changes
     this.statuses = JSON.parse(JSON.stringify(this.initialData));
+  },
+  computed: {
+    cardDragOptions() {
+      return {
+        animation: 200,
+        group: "card-list",
+        dragClass: "status-drag"
+      };
+    }
   },
   methods: {
     // set the statusId and trigger the form to show 
@@ -99,6 +121,20 @@ export default {
       // Reset and close the AddCardForm
       this.closeAddCardForm();
     },
-  }
+    handleCardMoved() {
+      // Send the entire list of statuses to the server
+      axios.put("/cards/sync", {columns: this.statuses}).catch(err => {
+        console.log(err.response);
+      });
+    },
+  },
+
+  
 };
 </script>
+<style scoped>
+.status-drag {
+  transition: transform 0.5s;
+  transition-property: all;
+}
+</style>
