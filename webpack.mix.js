@@ -1,4 +1,5 @@
 const mix = require('laravel-mix');
+const tailwindcss = require('tailwindcss');
 
 /*
  |--------------------------------------------------------------------------
@@ -19,7 +20,11 @@ mix
     require('tailwindcss'),
     require('postcss-nested'),
     require('autoprefixer'),
-  ]);
+  ])
+  .sass('resources/sass/app.scss', 'public/css')
+  .options({
+    postCss: [ tailwindcss('./tailwind.config.js') ],
+});
 
 if (mix.inProduction()) {
   mix
